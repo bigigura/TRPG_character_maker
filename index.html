@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>キャラシ制作キッド</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@300&display=swap');
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    *,
+    *::before,
+    *::after {
+        font-family: "M PLUS 1p", monospace;
+    }
+
+    .skill-row select { padding: 2px 4px; line-height: normal; }
+
+    /* 画像を置く枠組みのスタイル */
+    .image-picker-zone {
+      width: 320px;
+      height: 320px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      background-color: #16160E;
+    }
+
+    /* プレビュー画像 */
+    .preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .imageInput {
+      display: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1B1B1B;
+      height: 850px;
+      width: 100vw;
+      font-family: "M PLUS 1p", monospace;
+    }
+
+    button {
+      background: transparent;
+      border: none;
+      color: #F6F7F8;
+      cursor: pointer;
+      border-bottom: 1px solid #f6f7f8;
+    }
+    
+    .text {
+      background: transparent;
+      color: #F6F7F8;
+      border: none;
+      outline: none;
+      padding: 4px 0;
+      font-size: 18px;
+      text-align: center;
+      transform: translate(-50%, -50%);
+    }
+
+    .left {
+      text-align: left;
+      transform: translate(0, -50%);
+    }
+
+    .gray {
+      color: #C0C0C0;
+    }
+
+    .mini {
+      font-size: 15px;
+    }
+
+    .big {
+      font-size: 20px;
+    }
+
+    .with_bottom_border {
+      border-bottom: 1px solid #f6f7f8;
+    }
+
+    /* セレクトボックスの共通設定 */
+    select,
+    ::picker(select) {
+      appearance: base-select;
+      border: none;
+      border-radius: 0;
+      background-color: #000000;
+      color: #F6F7F8;
+    }
+
+    /* 技能一覧 */
+    .skill-list {
+      position: absolute;
+      left: 420px;
+      top: 305px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 技能1行分のまとまり */
+    .skill-row {
+      position: relative;
+      width: 550px;
+      height: 24px;
+      flex: none;
+    }
+
+    /* 技能行内の入力欄の共通設定 */
+    .skill-row select,
+    .skill-row input,
+    .skill-row span {
+      position: absolute;
+      top: 0;
+      transform: none;
+      box-sizing: border-box;
+      margin: 0;
+      height: 24px;
+      line-height: 24px;
+      font-size: 15px;
+    }
+
+    .skill-row input {
+      padding-top: 0;
+      padding-bottom: 0;
+      vertical-align: bottom;
+    }
+    
+    .skill-row span {
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 0;
+    }
+
+    .skill-row select {
+      left: 0;
+      width: 210px;
+    }
+
+    /* その他選択時 */
+    .skill-row select.is-other {
+      width: 100px;
+    }
+
+    /* 詳細入力欄 */
+    .skill-row .skill-detail {
+      left: 110px;
+      width: 100px;
+      display: none;
+    }
+
+    /* 初期値 */
+    .skill-row .initial-value {
+      left: 220px;
+      width: 50px;
+    }
+
+    /* 職業P */
+    .skill-row .occupation-points {
+      left: 280px;
+      width: 50px;
+    }
+
+    /* 興味P */
+    .skill-row .interest-points {
+      left: 340px;
+      width: 50px;
+    }
+
+    /* 成長P */
+    .skill-row .growth-points {
+      left: 400px;
+      width: 50px;
+    }
+
+    /* 合計 */
+    .skill-row .total-value {
+      left: 460px;
+      width: 50px;
+    }
+
+    .vertical-line {
+      background-color: #F6F7F8;
+    }
+  </style>
+</head>
+<body>
+  <!-- データ保存・読込 -->
+  <div style="position: absolute; left: 20px; top: 815px;">
+    <button id="saveData">データ保存</button>
+    <button id="loadData">データ読込</button>
+    <button id="saveImage">画像保存</button>
+    <input
+      type="file"
+      id="loadFile"
+      accept=".json"
+      style="display: none;">
+  </div>
+
+  <!-- 画像選択欄 -->
+  <label class="image-picker-zone">
+    <img class="preview" alt="プレビュー画像">
+  </label>
+
+  <input type="file" class="imageInput" accept="image/*">
+
+  <input type="text" class="text big with_bottom_border"
+    style="position: absolute; left: 160px; top: 370px; width: 300px;"
+    placeholder="キャラ名">
+
+  <input type="text" class="text gray mini"
+    style="position: absolute; left: 160px; top: 340px;"
+    placeholder="ふりがな">
+  
+
+  <label class="text left"
+    style="position: absolute; left: 360px; top: 20px;">プロフィール</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 420px; top: 45px;">職業</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 460px; top: 45px; width: 180px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 690px; top: 45px;">出身</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 730px; top: 45px; width: 180px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 495px; top: 85px;">性別</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 535px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 610px; top: 85px;">身長</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 650px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 725px; top: 85px;">体重</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 765px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 840px; top: 85px;">年齢</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 880px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 955px; top: 85px;">髪色</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 995px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 1070px; top: 85px;">目色</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 1110px; top: 85px; width: 50px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 1185px; top: 85px;">膚色</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 1225px; top: 85px; width: 50px;">
+  
+
+  <label class="text left"
+    style="position: absolute; left: 360px; top: 130px;">ステータス</label>
+
+  <label class="text"
+    style="position: absolute; left: 400px; top: 155px;">STR</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 400px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 500px; top: 155px;">CON</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 500px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 600px; top: 155px;">POW</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 600px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 700px; top: 155px;">DEX</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 700px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 800px; top: 155px;">APP</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 800px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 900px; top: 155px;">SIZ</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 900px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 1000px; top: 155px;">INT</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 1000px; top: 180px; width: 60px;">
+
+  <label class="text"
+    style="position: absolute; left: 1100px; top: 155px;">EDU</label>
+  <input type="number" class="text big with_bottom_border"
+    style="position: absolute; left: 1100px; top: 180px; width: 60px;">
+
+  <span class="text left mini" style="position: absolute; left: 495px; top: 230px;">幸運 <output class="text left mini with_bottom_border" id="luck" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 575px; top: 230px;">HP <output class="text left mini with_bottom_border" id="hp" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 655px; top: 230px;">MP <output class="text left mini with_bottom_border" id="mp" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 735px; top: 230px;">SAN <output class="text left mini with_bottom_border" id="san" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 815px; top: 230px;">不定 <output class="text left mini with_bottom_border" id="indefinite" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 895px; top: 230px;">アイデア <output class="text left mini with_bottom_border" id="idea" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 975px; top: 230px;">知識 <output class="text left mini with_bottom_border" id="knowledge" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 1055px; top: 230px;">MOV <output class="text left mini with_bottom_border" id="mov" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 1135px; top: 230px;">DB <output class="text left mini with_bottom_border" id="db" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 1215px; top: 230px;">ビルド <output class="text left mini with_bottom_border" id="build" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 80px; top: 445px;">職業P <output class="text left mini with_bottom_border" id="job-point" style="display: block; width: 110px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 210px; top: 445px;">興味P <output class="text left mini with_bottom_border" id="interest-point" style="display: block; width: 110px; margin-top: 5px;">　</output></span>
+
+  <label class="text left"
+    style="position: absolute; left: 25px; top: 420px;">技能</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 200px; top: 475px;">技能名</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 420px; top: 475px;">初期値</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 480px; top: 475px;">職業</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 540px; top: 475px;">興味</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 600px; top: 475px;">成長</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 660px; top: 475px;">合計</label>
+
+
+  <label class="text left mini"
+    style="position: absolute; left: 750px; top: 475px;">技能名</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 970px; top: 475px;">初期値</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 1030px; top: 475px;">職業</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 1090px; top: 475px;">興味</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 1150px; top: 475px;">成長</label>
+
+  <label class="text left mini"
+    style="position: absolute; left: 1210px; top: 475px;">合計</label>
+
+  <!-- JavaScriptで技能行を追加する場所 -->
+  <div class="skill-list" style="position: absolute; left: 200px; top: 490px;" ></div>
+  <div class="skill-list" style="position: absolute; left: 750px; top: 490px;" ></div>
+
+
+  <label class="text left"
+    style="position: absolute; left: 360px; top: 285px;">武器</label>
+  
+  <label class="text left mini"
+    style="position: absolute; left: 440px; top: 290px;">武器名</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 440px; top: 310px; width: 200px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 440px; top: 340px; width: 200px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 440px; top: 370px; width: 200px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 650px; top: 290px;">成功値</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 650px; top: 310px; width: 150px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 650px; top: 340px; width: 150px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 650px; top: 370px; width: 150px;">
+  
+  <label class="text left mini"
+    style="position: absolute; left: 810px; top: 290px;">ダメージ</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 810px; top: 310px; width: 150px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 810px; top: 340px; width: 150px;">
+    <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 810px; top: 370px; width: 150px;">
+
+  <label class="text left mini"
+    style="position: absolute; left: 970px; top: 290px;">メモ</label>
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 970px; top: 310px; width: 300px;">
+  <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 970px; top: 340px; width: 300px;">
+    <input type="text" class="text left mini with_bottom_border"
+    style="position: absolute; left: 970px; top: 370px; width: 300px;">
+
+  <label class="vertical-line" style="position: absolute; left: 335px; top: 10px; width: 1px; height: 380px;"></label>
+  <label class="vertical-line" style="position: absolute; left: 350px; top: 110px; width: 930px; height: 1px;"></label>
+  <label class="vertical-line" style="position: absolute; left: 350px; top: 260px; width: 930px; height: 1px;"></label>
+  <label class="vertical-line" style="position: absolute; left: 10px; top: 400px; width: 1275px; height: 1px;"></label>
+  <label class="vertical-line" style="position: absolute; left: 10px; top: 810px; width: 1275px; height: 1px;"></label>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const skillList = [
+      { value: 0, label: '信用' },
+      { value: 0, label: '回避' },
+      { value: 25, label: '近接戦闘' },
+      { value: 20, label: '投擲' },
+      { value: 0, label: '射撃' },
+      { value: 30, label: '応急手当' },
+      { value: 1, label: '鍵開け' },
+      { value: 10, label: '手さばき' },
+      { value: 20, label: '聞き耳' },
+      { value: 20, label: '隠密' },
+      { value: 1, label: '精神分析' },
+      { value: 10, label: '追跡' },
+      { value: 20, label: '登攀' },
+      { value: 20, label: '図書館' },
+      { value: 25, label: '目星' },
+      { value: 5, label: '鑑定' },
+      { value: 20, label: '運転' },
+      { value: 10, label: '機械修理' },
+      { value: 1, label: '重機械操作' },
+      { value: 5, label: '乗馬' },
+      { value: 20, label: '水泳' },
+      { value: 5, label: '芸術/制作' },
+      { value: 1, label: '操縦' },
+      { value: 20, label: '跳躍' },
+      { value: 10, label: '電気修理' },
+      { value: 10, label: 'ナビゲート' },
+      { value: 5, label: '変装' },
+      { value: 5, label: '言いくるめ' },
+      { value: 10, label: '説得' },
+      { value: 0, label: '母国語' },
+      { value: 15, label: '威圧' },
+      { value: 15, label: '魅惑' },
+      { value: 1, label: '言語' },
+      { value: 1, label: '医学' },
+      { value: 5, label: 'オカルト' },
+      { value: 0, label: 'クトゥルフ神話' },
+      { value: 5, label: '経理' },
+      { value: 1, label: '考古学' },
+      { value: 5, label: 'コンピューター' },
+      { value: 1, label: '科学' },
+      { value: 10, label: '心理学' },
+      { value: 1, label: '人類学' },
+      { value: 1, label: '電子工学' },
+      { value: 10, label: '自然' },
+      { value: 5, label: '法律' },
+      { value: 5, label: '歴史' },
+      { value: 10, label: 'サバイバル' },
+      { value: 0, label: 'その他' }
+    ];
+
+    const skillContainers = document.querySelectorAll('.skill-list');
+    const skillsWithDetail = new Set(['近接戦闘', '射撃', '運転', '芸術/制作', '操縦', '母国語', '言語', '科学', 'サバイバル', 'その他']);
+    const skillOptions = document.createDocumentFragment();
+    skillOptions.append(new Option('', ''));
+    skillList.forEach(({ value, label }) => skillOptions.append(new Option(label, value)));
+
+    /* 数値入力欄を作る */
+    function createNumberInput(className) {
+      const input = document.createElement('input');
+
+      input.type = 'number';
+      input.className = 'text left mini with_bottom_border ' + className;
+
+      return input;
+    }
+
+    /* 技能1行分を作る */
+    function addSkillRow(container) {
+      const row = document.createElement('div');
+      row.className = 'skill-row';
+
+      /* 技能選択欄 */
+      const select = document.createElement('select');
+      select.className = 'text left mini with_bottom_border skill-select';
+      select.append(skillOptions.cloneNode(true));
+
+      /* 追加テキストボックス */
+      const skillDetail = document.createElement('input');
+      skillDetail.type = 'text';
+      skillDetail.className = 'text left mini with_bottom_border skill-detail';
+
+      /* 初期値 */
+      const initialValue = document.createElement('span');
+      initialValue.className =  'text left mini with_bottom_border ' + 'initial-value';
+      initialValue.textContent = '　';
+
+      /* 職業P・興味P・成長P */
+      const occupationPoints =
+        createNumberInput('occupation-points');
+
+      const interestPoints =
+        createNumberInput('interest-points');
+
+      const growthPoints =
+        createNumberInput('growth-points');
+
+      /* 合計 */
+      const totalValue = document.createElement('span');
+      totalValue.className =  'text left mini with_bottom_border ' + 'total-value';
+      totalValue.textContent = '　';
+
+      /* 合計を計算する */
+      function updateTotal() {
+        if (select.value === '') {
+          initialValue.textContent = '　';
+          totalValue.textContent = '　';
+          return;
+        }
+
+        const initial = Number(select.value);
+        const occupation = Number(occupationPoints.value) || 0;
+        const interest = Number(interestPoints.value) || 0;
+        const growth = Number(growthPoints.value) || 0;
+
+        initialValue.textContent = initial;
+
+        totalValue.textContent =
+          initial + occupation + interest + growth;
+      }
+
+      /* 技能を選んだとき */
+      select.addEventListener('change', () => {
+
+        const selectedSkill =
+          select.options[select.selectedIndex].textContent;
+
+        const isOther = skillsWithDetail.has(selectedSkill);
+
+        // プルダウンの長さを変更
+        select.classList.toggle('is-other', isOther);
+
+        // 詳細入力欄の表示・非表示
+        skillDetail.style.display =
+          isOther ? 'block' : 'none';
+
+        updateTotal();
+      });
+
+      /* ポイントを変更したとき */
+      occupationPoints.addEventListener('input', updateTotal);
+      interestPoints.addEventListener('input', updateTotal);
+      growthPoints.addEventListener('input', updateTotal);
+
+      /* すべての要素を技能行にまとめる */
+      row.append(
+        select,
+        skillDetail,
+        initialValue,
+        occupationPoints,
+        interestPoints,
+        growthPoints,
+        totalValue
+      );
+
+      container.appendChild(row);
+    }
+
+    /* 8行表示する */
+    skillContainers.forEach(container => {
+      for (let i = 0; i < 8; i++) {
+        addSkillRow(container);
+      }
+    });
+
+    /* 画像選択 */
+    const imageInput = document.querySelector('.imageInput');
+    const preview = document.querySelector('.preview');
+
+    document.querySelector('.image-picker-zone')
+      .addEventListener('click', () => {
+        imageInput.click();
+      });
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+          preview.src = event.target.result;
+          preview.style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+      }
+    });
+
+
+    /* ステータスから派生値を自動計算 */
+    const statFields = [...document.querySelectorAll('input[type="number"][style*="top: 180px"]')];
+    const [str, con, pow, dex, , siz, int, edu] = statFields;
+    const statInputs = { str, con, pow, dex, siz, int, edu };
+
+    /* 職業ポイントの合計を返す関数 */
+    function getOccupationTotal() {
+      let total = 0;
+      document.querySelectorAll('.occupation-points').forEach(input => {
+        total += Number(input.value) || 0;
+      });
+      return total;
+    }
+
+    function getInterestTotal() {
+      let total = 0;
+      document.querySelectorAll('.interest-points').forEach(input => {
+        total += Number(input.value) || 0;
+      });
+      return total;
+    }
+
+    const derived = Object.fromEntries(['luck','hp','mp','san','indefinite','idea','knowledge','mov','db','build','job-point','interest-point'].map(id => [id, document.getElementById(id)]));
+
+    
+    function updateDerivedStats() {
+
+      const { str, con, pow, dex, siz, int, edu } =
+        Object.fromEntries(
+          Object.entries(statInputs).map(
+            ([key, input]) => [key, Number(input.value)]
+          )
+        );
+
+      const has = input => input.value.trim() !== '';
+
+      // HP：CON + SIZ を10で割り、端数切り捨て
+      derived['hp'].textContent =
+        has(statInputs.con) && has(statInputs.siz)
+          ? Math.floor((con + siz) / 10)
+          : '　';
+
+      // MP：POWの5分の1、端数切り捨て
+      derived['mp'].textContent =
+        has(statInputs.pow)
+          ? Math.floor(pow / 5)
+          : '　';
+
+      // 初期SAN：POWと同じ値
+      derived['san'].textContent =
+        has(statInputs.pow) ? pow + '/99': '　';
+
+      // 不定の狂気：初期SANの5分の4
+      derived['indefinite'].textContent =
+        has(statInputs.pow)
+          ? Math.floor(pow * 4 / 5)
+          : '　';
+
+      // アイデア：INTそのもの
+      derived['idea'].textContent =
+        has(statInputs.int) ? int : '　';
+
+      // 知識：EDUそのもの
+      derived['knowledge'].textContent =
+        has(statInputs.edu) ? edu : '　';
+
+      // MOV：STR・DEX・SIZの比較
+      if (
+        has(statInputs.str) &&
+        has(statInputs.dex) &&
+        has(statInputs.siz)
+      ) {
+        let mov =
+          str < siz && dex < siz ? 7 :
+          str > siz && dex > siz ? 9 : 8;
+
+        derived['mov'].textContent = mov;
+      } else {
+        derived['mov'].textContent = '　';
+      }
+
+      // DB・ビルド：STR + SIZ
+      if (has(statInputs.str) && has(statInputs.siz)) {
+        const total = str + siz;
+        let db;
+        let build;
+
+        if (total <= 64) {
+          db = '−2';
+          build = -2;
+        } else if (total <= 84) {
+          db = '−1';
+          build = -1;
+        } else if (total <= 124) {
+          db = '0';
+          build = 0;
+        } else if (total <= 164) {
+          db = '+1D4';
+          build = 1;
+        } else if (total <= 204) {
+          db = '+1D6';
+          build = 2;
+        } else {
+          const tier = Math.floor((total - 125) / 80);
+          const dice = Math.floor((total - 125) / 80);
+          db = `+${dice}D6`;
+          build = tier + 1;
+        }
+
+        derived['db'].textContent = db;
+        derived['build'].textContent = build;
+      } else {
+        derived['db'].textContent = '　';
+        derived['build'].textContent = '　';
+      }
+
+      derived['job-point'].textContent =
+        has(statInputs.edu) ? (getOccupationTotal()) + '/' + (edu*4): '　';
+
+      derived['interest-point'].textContent =
+        has(statInputs.int) ? (getInterestTotal()) + '/' + (int*2): '　';
+    }
+
+    // 能力値が変わったら自動再計算
+    Object.values(statInputs).forEach(input =>
+      input.addEventListener('input', updateDerivedStats)
+    );
+
+    document.addEventListener('input', (event) => {
+      if (event.target.classList.contains('occupation-points') || event.target.classList.contains('interest-points')) {
+        updateDerivedStats();
+      }
+    });
+
+    function updateLuck() {
+      const roll = () => Math.floor(Math.random() * 6) + 1;
+      derived['luck'].textContent =
+        (roll() + roll() + roll()) * 5;
+    }
+
+    Object.values(statInputs).forEach(input => {
+      input.addEventListener('change', updateLuck);
+    });
+
+    // 初回計算
+    updateDerivedStats();
+
+    /* =========================
+      キャラクターデータ保存・読込
+    ========================= */
+
+    const saveButton = document.getElementById('saveData');
+    const loadButton = document.getElementById('loadData');
+    const loadFile = document.getElementById('loadFile');
+
+    /* 画像をBase64に変換 */
+    const imageToBase64 = () => preview.style.display === 'none' ? '' : preview.src;
+
+    /* 保存 */
+    saveButton.addEventListener('click', () => {
+
+      const data = {
+        inputs: [],
+        image: imageToBase64(),
+        luck: derived['luck'].textContent
+      };
+
+      document.querySelectorAll('input, select, textarea')
+        .forEach(element => {
+
+          if (element.type === 'file') return;
+
+          data.inputs.push({
+            tag: element.tagName,
+            type: element.type || '',
+            value: element.value,
+
+            // プルダウンの選択文字も保存
+            selectedText: element.tagName === 'SELECT'
+              ? element.options[element.selectedIndex].textContent
+              : null
+          });
+
+        });
+
+      const json = JSON.stringify(data, null, 2);
+
+      const blob = new Blob(
+        [json],
+        { type: 'application/json' }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data.json';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    });
+
+
+    /* 読込ボタン */
+    loadButton.addEventListener('click', () => {
+      loadFile.click();
+    });
+
+
+    /* 読込 */
+    loadFile.addEventListener('change', event => {
+
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = e => {
+
+        try {
+
+          const data = JSON.parse(e.target.result);
+
+          const elements = Array.from(
+            document.querySelectorAll('input, select, textarea')
+          ).filter(element => element.type !== 'file');
+
+          data.inputs.forEach((item, index) => {
+
+            const element = elements[index];
+
+            if (!element) return;
+
+            if (
+              element.tagName === item.tag &&
+              element.type === item.type
+            ) {
+
+              if (item.tag === 'SELECT' && item.selectedText !== null) {
+
+                // 選択肢の文字から復元
+                const index = Array.from(element.options).findIndex(
+                  option => option.textContent === item.selectedText
+                );
+
+                if (index !== -1) {
+                  element.selectedIndex = index;
+                }
+
+              } else {
+                element.value = item.value;
+              }
+
+              element.dispatchEvent(
+                new Event('input', { bubbles: true })
+              );
+
+              element.dispatchEvent(
+                new Event('change', { bubbles: true })
+              );
+
+            }
+
+          });
+
+          /* 画像を復元 */
+          if (data.image) {
+            preview.src = data.image;
+            preview.style.display = 'block';
+          } else {
+            preview.removeAttribute('src');
+            preview.style.display = 'none';
+          }
+
+          /* 派生値を更新 */
+          updateDerivedStats();
+
+          if (data.luck !== undefined) {
+            derived['luck'].textContent = data.luck;
+          }
+
+        } catch (error) {
+
+          alert('データの読み込みに失敗しました。');
+          console.error(error);
+
+        }
+
+      };
+
+      reader.readAsText(file);
+
+      loadFile.value = '';
+
+    });
+
+    document.getElementById("saveImage").addEventListener("click", async () => {
+
+      // 画像の読み込み完了を待つ
+      if (preview.src) {
+        try {
+          await preview.decode();
+        } catch (error) {
+          console.warn("画像の読み込みに失敗しました", error);
+        }
+      }
+
+      const canvas = await html2canvas(document.body, {
+        scale: 2,
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: false,
+
+        width: document.documentElement.scrollWidth,
+        height: 820,
+
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: 800,
+
+        scrollX: 0,
+        scrollY: 0,
+
+        onclone: (clonedDoc) => {
+
+          // =========================
+          // 画像の縦横比を補正
+          // =========================
+
+          const clonedPreview = clonedDoc.querySelector(".preview");
+          const clonedZone = clonedDoc.querySelector(".image-picker-zone");
+
+          if (
+            clonedPreview &&
+            clonedZone &&
+            preview.naturalWidth > 0 &&
+            preview.naturalHeight > 0
+          ) {
+            const boxWidth = clonedZone.clientWidth;
+            const boxHeight = clonedZone.clientHeight;
+
+            const scale = Math.max(
+              boxWidth / preview.naturalWidth,
+              boxHeight / preview.naturalHeight
+            );
+
+            clonedPreview.style.width =
+              (preview.naturalWidth * scale) + "px";
+
+            clonedPreview.style.height =
+              (preview.naturalHeight * scale) + "px";
+
+            clonedPreview.style.maxWidth = "none";
+            clonedPreview.style.maxHeight = "none";
+            clonedPreview.style.flex = "none";
+            clonedPreview.style.objectFit = "fill";
+          }
+
+
+          // =========================
+          // 技能欄のプルダウンを文字に変換
+          // =========================
+
+          const originalSelects =
+            document.querySelectorAll(".skill-row select");
+
+          const clonedSelects =
+            clonedDoc.querySelectorAll(".skill-row select");
+
+          clonedSelects.forEach((select, index) => {
+
+            const original = originalSelects[index];
+
+            if (!original) return;
+
+            // 元の画面から選択中の技能名を取得
+            const selectedText =
+              original.options[original.selectedIndex]?.textContent || "";
+
+            // 表示用の要素を作成
+            const label = clonedDoc.createElement("div");
+
+            label.textContent = selectedText;
+
+            // 元のプルダウンの位置・サイズ・文字設定を取得
+            const style = window.getComputedStyle(original);
+
+            [
+              "position",
+              "left",
+              "top",
+              "width",
+              "height",
+              "boxSizing",
+              "margin",
+              "padding",
+              "fontFamily",
+              "fontSize",
+              "fontWeight",
+              "lineHeight",
+              "color",
+              "textAlign",
+              "transform",
+              "backgroundColor",
+              "border",
+              "borderBottom"
+            ].forEach(property => {
+              label.style[property] = style[property];
+            });
+
+            // 描画用の調整
+            label.style.display = "flex";
+            label.style.alignItems = "center";
+            label.style.whiteSpace = "nowrap";
+            label.style.overflow = "hidden";
+
+            // プルダウンを文字に置き換える
+            select.replaceWith(label);
+
+          });
+
+        }
+      });
+
+      const link = document.createElement("a");
+      link.download = "キャラシ.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+
+    });
+  </script>
+
+</body>
+</html>
