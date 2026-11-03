@@ -321,16 +321,16 @@
   <input type="number" class="text big with_bottom_border"
     style="position: absolute; left: 1100px; top: 180px; width: 60px;">
 
-  <span class="text left mini" style="position: absolute; left: 495px; top: 230px;">幸運 <output class="text left mini with_bottom_border" id="luck" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 575px; top: 230px;">HP <output class="text left mini with_bottom_border" id="hp" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 655px; top: 230px;">MP <output class="text left mini with_bottom_border" id="mp" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 735px; top: 230px;">SAN <output class="text left mini with_bottom_border" id="san" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 815px; top: 230px;">不定 <output class="text left mini with_bottom_border" id="indefinite" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 895px; top: 230px;">アイデア <output class="text left mini with_bottom_border" id="idea" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 975px; top: 230px;">知識 <output class="text left mini with_bottom_border" id="knowledge" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 1055px; top: 230px;">MOV <output class="text left mini with_bottom_border" id="mov" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 1135px; top: 230px;">DB <output class="text left mini with_bottom_border" id="db" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
-  <span class="text left mini" style="position: absolute; left: 1215px; top: 230px;">ビルド <output class="text left mini with_bottom_border" id="build" style="display: block; width: 45px; margin-top: 5px;">　</output></span>
+  <span class="text left mini" style="position: absolute; left: 495px; top: 230px;">幸運 <input type="text" class="text left mini with_bottom_border" id="luck" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 575px; top: 230px;">HP <input type="text" class="text left mini with_bottom_border" id="hp" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 655px; top: 230px;">MP <input type="text" class="text left mini with_bottom_border" id="mp" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 735px; top: 230px;">SAN <input type="text" class="text left mini with_bottom_border" id="san" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 815px; top: 230px;">不定 <input type="text" class="text left mini with_bottom_border" id="indefinite" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 895px; top: 230px;">アイデア <input type="text" class="text left mini with_bottom_border" id="idea" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 975px; top: 230px;">知識 <input type="text" class="text left mini with_bottom_border" id="knowledge" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 1055px; top: 230px;">MOV <input type="text" class="text left mini with_bottom_border" id="mov" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 1135px; top: 230px;">DB <input type="text" class="text left mini with_bottom_border" id="db" style="display: block; width: 45px; margin-top: 5px;"></span>
+  <span class="text left mini" style="position: absolute; left: 1215px; top: 230px;">ビルド <input type="text" class="text left mini with_bottom_border" id="build" style="display: block; width: 45px; margin-top: 5px;"></span>
   <span class="text left mini" style="position: absolute; left: 80px; top: 445px;">職業P <output class="text left mini with_bottom_border" id="job-point" style="display: block; width: 110px; margin-top: 5px;">　</output></span>
   <span class="text left mini" style="position: absolute; left: 210px; top: 445px;">興味P <output class="text left mini with_bottom_border" id="interest-point" style="display: block; width: 110px; margin-top: 5px;">　</output></span>
 
@@ -653,33 +653,33 @@
       const has = input => input.value.trim() !== '';
 
       // HP：CON + SIZ を10で割り、端数切り捨て
-      derived['hp'].textContent =
+      derived['hp'].value =
         has(statInputs.con) && has(statInputs.siz)
           ? Math.floor((con + siz) / 10)
           : '　';
 
       // MP：POWの5分の1、端数切り捨て
-      derived['mp'].textContent =
+      derived['mp'].value =
         has(statInputs.pow)
           ? Math.floor(pow / 5)
           : '　';
 
       // 初期SAN：POWと同じ値
-      derived['san'].textContent =
+      derived['san'].value =
         has(statInputs.pow) ? pow + '/99': '　';
 
       // 不定の狂気：初期SANの5分の4
-      derived['indefinite'].textContent =
+      derived['indefinite'].value =
         has(statInputs.pow)
           ? Math.floor(pow * 4 / 5)
           : '　';
 
       // アイデア：INTそのもの
-      derived['idea'].textContent =
+      derived['idea'].value =
         has(statInputs.int) ? int : '　';
 
       // 知識：EDUそのもの
-      derived['knowledge'].textContent =
+      derived['knowledge'].value =
         has(statInputs.edu) ? edu : '　';
 
       // MOV：STR・DEX・SIZの比較
@@ -692,9 +692,9 @@
           str < siz && dex < siz ? 7 :
           str > siz && dex > siz ? 9 : 8;
 
-        derived['mov'].textContent = mov;
+        derived['mov'].value = mov;
       } else {
-        derived['mov'].textContent = '　';
+        derived['mov'].value = '　';
       }
 
       // DB・ビルド：STR + SIZ
@@ -725,11 +725,11 @@
           build = tier + 1;
         }
 
-        derived['db'].textContent = db;
-        derived['build'].textContent = build;
+        derived['db'].value = db;
+        derived['build'].value = build;
       } else {
-        derived['db'].textContent = '　';
-        derived['build'].textContent = '　';
+        derived['db'].value = '　';
+        derived['build'].value = '　';
       }
 
       derived['job-point'].textContent =
@@ -752,7 +752,7 @@
 
     function updateLuck() {
       const roll = () => Math.floor(Math.random() * 6) + 1;
-      derived['luck'].textContent =
+      derived['luck'].value =
         (roll() + roll() + roll()) * 5;
     }
 
@@ -780,7 +780,7 @@
       const data = {
         inputs: [],
         image: imageToBase64(),
-        luck: derived['luck'].textContent
+        luck: derived['luck'].value
       };
 
       document.querySelectorAll('input, select, textarea')
@@ -895,8 +895,16 @@
           updateDerivedStats();
 
           if (data.luck !== undefined) {
-            derived['luck'].textContent = data.luck;
+            derived['luck'].value = data.luck;
           }
+
+          /* 手動入力した派生値を復元 */
+          data.inputs.forEach((item, index) => {
+            const element = elements[index];
+            if (element && ['luck', 'hp', 'mp', 'san', 'indefinite', 'idea', 'knowledge', 'mov', 'db', 'build'].includes(element.id)) {
+              element.value = item.value;
+            }
+          });
 
         } catch (error) {
 
