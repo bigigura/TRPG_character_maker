@@ -1,0 +1,198 @@
+/* inport font */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@300&display=swap');
+
+*,
+*::before,
+*::after {
+    font-family: "M PLUS 1p", monospace;
+}
+
+/* hide number button */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* body settings */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1B1B1B;
+    height: 850px;
+    width: 100vw;
+    font-family: "M PLUS 1p", monospace;
+}
+
+button {
+    background: transparent;
+    border: none;
+    color: #F6F7F8;
+    cursor: pointer;
+    border-bottom: 1px solid #f6f7f8;
+}
+
+select,
+::picker(select) {
+    appearance: base-select;
+    border: none;
+    border-radius: 0;
+    background-color: #000000;
+    color: #F6F7F8;
+}
+
+/* line */
+.line {
+    position: absolute;
+    background-color: #F6F7F8;
+}
+
+/* text */
+.text {
+    position: absolute;
+    background: transparent;
+    color: #F6F7F8;
+    border: none;
+    outline: none;
+    padding: 4px 0;
+    font-size: 18px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}
+
+.left {
+    text-align: left;
+    transform: translate(0, -50%);
+}
+
+.gray {
+    color: #C0C0C0;
+}
+
+.mini {
+    font-size: 15px;
+}
+
+.big {
+    font-size: 20px;
+}
+
+.with_bottom_border {
+    border-bottom: 1px solid #f6f7f8;
+}
+
+/* image settings */ 
+.image-picker-zone {
+    width: 320px;
+    height: 320px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: #16160E;
+}
+
+.preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.imageInput {
+    display: none;
+}
+
+/* skill list settings */
+.skill-list {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skill-row {
+    position: relative;
+    height: 24px;
+    flex: none;
+}
+
+.skill-row select,
+.skill-row input,
+.skill-row span {
+    position: absolute;
+    top: 0;
+    transform: none;
+    box-sizing: border-box;
+    margin: 0;
+    height: 24px;
+    line-height: 24px;
+    font-size: 15px;
+}
+
+.skill-row input {
+    padding: 0;
+    display: flex;
+    align-items: flex-end;
+    vertical-align: bottom;
+}
+
+.skill-row input[type="text"] {
+    padding-top: 4px;
+}
+
+.skill-row span {
+    padding-bottom: 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+.skill-row select {
+    padding: 2px 4px;
+}
+
+.skill-row select.with-detail {
+    width: 105px;
+}
+
+.skill-row select.else {
+    left: 295px;
+    width: 25px;
+}
+
+.skill-row .skill-select {
+    left: 0;
+    width: 320px;
+}
+
+.skill-row .skill-detail {
+    left: 115px;
+    width: 205px;
+}
+
+.skill-row .initial-value {
+    left: 330px;
+    width: 45px;
+}
+
+.skill-row .occupation-points {
+    left: 385px;
+    width: 45px;
+}
+
+.skill-row .interest-points {
+    left: 440px;
+    width: 45px;
+}
+
+.skill-row .growth-points {
+    left: 495px;
+    width: 45px;
+}
+
+.skill-row .total-value {
+    left: 550px;
+    width: 45px;
+}
