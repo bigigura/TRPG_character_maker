@@ -153,13 +153,13 @@ function addSkillRow(container) {
       skillDetailelse.value = '';
       setTimeout(() => { skillDetailelse.focus();} , 50);
     }
-    else if (isOther && select.value !== 'options') {
+    else if (isOther && select.value !== 'options' && select.value !== 'else') {
       skillDetail.style.display = 'none';
       skillDetail.classList.remove('else');
       skillDetailelse.style.display = ''
       setTimeout(() => { skillDetailelse.focus();} , 50);
     }
-    else if (isOther && skillDetail.value !== 'else') {
+    else if (isOther && skillDetail.value !== 'else'  && select.value !== 'else') {
       skillDetail.style.display = '';
       skillDetail.classList.remove('else');
       skillDetailelse.style.display = 'none'
