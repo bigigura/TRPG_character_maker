@@ -199,7 +199,7 @@ function addSkillRow(container) {
       initial = Number(select.value);
     }
 
-    if (skillDetail.selectedIndex === -1) {
+    if (select.value === 'options' && skillDetail.selectedIndex === -1) {
       initialValue.readOnly = false;
     }
     else if (select.value === 'else') {
